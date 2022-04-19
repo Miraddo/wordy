@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"strings"
@@ -10,23 +11,10 @@ import (
 	"unicode"
 )
 
-var dic = []string{
-	"cat",
-	"dog",
-	"monkey",
-	"dolphin",
-	"horse",
-	"fish",
-	"elephant",
-}
-
 // the number to let user try to guess.
 const try = 5
 
 func main() {
-	// having random number with set seed.
-	rand.Seed(time.Now().UnixNano())
-
 	store := map[rune]bool{}
 	randWord := randomWord()
 
@@ -45,19 +33,30 @@ func main() {
 		} else {
 			tryLeft++
 			if tryLeft == try {
-				fmt.Printf("!!!!!!! Game Over !!!!!!! \n >>>>> %s", randWord)
+				fmt.Println("!!!!!!! Game Over !!!!!!!")
+				fmt.Printf(">>>>> %s \n", randWord)
+				os.Exit(1)
 			}
 		}
 	}
 
-	fmt.Printf(
-		" >>>>>>>> %s  \n ************* You Win ************* \n",
-		randWord)
+	fmt.Printf(" >>>>>>>> %s  \n ************* You Win ************* \n", randWord)
 }
 
 // randomWord is return a word randomly.
 func randomWord() string {
-	return dic[rand.Intn(len(dic))]
+	randseed := rand.NewSource(time.Now().UnixNano())
+	gen := rand.New(randseed).Intn(219469) // length of the line
+	var word string
+
+	data, err := ioutil.ReadFile("english-words.txt")
+	if err == nil {
+		a := string(data)
+		s := strings.Split(a, "\n")
+		word = s[gen]
+	}
+
+	return strings.TrimSpace(word)
 }
 
 // guessing is return the correct statement.
