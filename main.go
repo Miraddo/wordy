@@ -27,8 +27,12 @@ func main() {
 			fmt.Println("the input is wrong please just input one letter")
 			continue
 		}
+
 		l := rune(input[0])
 		if checkGuessing(randWord, l) {
+			if store[l] {
+				fmt.Println("Hey, Pick another letter you already use this one")
+			}
 			store[l] = true
 		} else {
 			tryLeft++
